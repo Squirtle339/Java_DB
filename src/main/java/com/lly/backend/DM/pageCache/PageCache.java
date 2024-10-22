@@ -10,7 +10,7 @@ public interface PageCache {
     Page getPage(int pgno) throws Exception;
     void close();
     void release(Page page);
-    void truncateByBgno(int maxPgno);
+    void truncateByPgno(int maxPgno);
     int getPageNumber();
     void flushPage(Page pg);
 }

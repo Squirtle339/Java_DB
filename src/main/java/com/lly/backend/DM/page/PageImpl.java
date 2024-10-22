@@ -1,6 +1,8 @@
 package com.lly.backend.DM.page;
 
-import sun.jvm.hotspot.debugger.PageCache;
+
+
+import com.lly.backend.DM.pageCache.PageCache;
 
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -24,36 +26,37 @@ public class PageImpl implements Page{
 
     @Override
     public void lock() {
-
+        lock.lock();
     }
 
     @Override
     public void unlock() {
+        lock.unlock();
 
     }
 
     @Override
     public void release() {
-
+        pageCache.release(this);
     }
 
     @Override
     public void setDirty(boolean dirty) {
-
+        this.isdirty = dirty;
     }
 
     @Override
     public boolean isDirty() {
-        return false;
+        return isdirty;
     }
 
     @Override
     public int getPageNumber() {
-        return 0;
+        return pageNumber;
     }
 
     @Override
     public byte[] getData() {
-        return new byte[0];
+        return data;
     }
 }

@@ -1,3 +1,5 @@
+
+
 # Java_DB
 
 手写一个简易版关系型数据库，参考了[CN-GuoZiyang/MYDB: 一个简单的数据库实现 (github.com)](https://github.com/CN-GuoZiyang/MYDB)
@@ -95,6 +97,42 @@ TM提供七个接口和两个静态方法
 
 
 
+实现了一个抽象基础缓存框架类***AbstractCache<T>***，包含如下数据结构
+
+```java
+private HashMap<Long, T> cache;    // 缓存数据
+private HashMap<Long, Integer> references;    // 引用计数
+private HashMap<Long, Boolean> getting;        // 记录资源是否正在从数据源获取中（从数据源获取资源是一个相对费时的操作）
+private int maxResource;    // 缓存的最大缓存资源数
+private int count = 0;    // 缓存中元素的个数
+private Lock lock;    // 用于保护缓存的锁
+```
+
+```java
+
+
+    //获取资源
+    protected T get(long key) throws Exception {
+//		...
+    }
+ 	//释放一个缓存资源
+    protected void release(long key) {
+//		...
+    }
+	//关闭缓存，写回所有资源
+    protected void close() {
+//        ...
+    }
+
+	/*两个抽象方法*/
+    //当资源不在缓存时的获取行为
+    protected abstract T getForCache(long key) throws Exception;
+    //当资源被驱逐时的写回行为
+    protected abstract void releaseForCache(T obj);
+```
+
+
+
 #### 二、共享内存数组（不得已而为之）
 
 因为java的数组在内存中也是对象，无法实现子数组和原数组共享内存，于是原作者自己实现一个mySubArray类实现共享内存（巧妙！）
@@ -115,8 +153,91 @@ public class SubArray {
 }
 ```
 
+#### 三、数据页类
 
+一个页面类代表一个页面，包含页面数据和其他信息，参考大部分数据库的设计，将默认数据页大小定为 8K
 
-#### 三、数据页缓存
+```java
+public class PageImpl implements Page{
+    private int pageNumber;		//这个页面的页号
+    private byte[] data;		//这个页面的数据
+    private boolean isdirty;    //在缓存驱逐的时候，脏页面需要被写回磁盘
+    private Lock lock;
+    private PageCache pageCache; //表示页面缓存类
+ }
+```
+
+页面类提供如下接口，实现比较简单：
+
+```java
+void lock();
+void unlock();
+void release();
+void setDirty(boolean dirty);
+boolean isDirty();
+int getPageNumber();
+byte[] getData();
+```
+
+#### 四、数据页缓存
 
 > **DM 将文件系统抽象成页面**，每次对文件系统的读写都是以页面为单位的。同样，从文件系统读进来的数据也是以页面为单位进行缓存的
+
+页面缓存基于基础缓存框架实现，除了实现两个抽象方法外，还实现了一些基本的页面缓存操作
+
+```java
+int newPage(byte[] initData);			//在缓存新建一个空白页，返回页号，立即写入数据库
+Page getPage(int pgno) throws Exception;//根据页号获取页对象，分在和不在缓存的情况
+void close();							//关闭缓存，写回所有资源
+void release(Page page);				//释放一个缓存页面
+void truncateByPgno(int maxPgno);		//根据页号截断数据库文件
+int getPageNumber();					//获取页总数
+void flushPage(Page pg);				//将页数据写回到数据库文件中
+```
+
+
+
+🚩一个小知识点:
+
+对于缓存里记录的总页面数，使用AtomicInteger实现，不需要额外的锁来实现同步，比较方便
+
+```java
+//在多线程环境下，无需额外的同步措施，即可保证操作的线程安全性
+private AtomicInteger pageNumbers;
+
+//AtomicInteger的一些常用操作
+get();			 	//获取当前值。
+set(int newValue);	//设置当前值。
+incrementAndGet();	//原子地将当前值加一，并返回新值。
+decrementAndGet();	//原子地将当前值减一，并返回新值。
+addAndGet(int delta);//原子地将当前值加上给定的数值，并返回新值。
+compareAndSet(int expect, int update);//如果当前值等于 expect，则原子地将该值设置为 update，并返回 true；否则，返回 false。
+
+```
+
+
+
+#### 五、页面管理
+
+##### 首页
+
+数据库文件的第一页，通常用作一些特殊用途，比如存储一些元数据，用来启动检查什么的
+
+在这设计第一页用于启动检查，具体的原理是，在每次数据库启动时，会生成一串随机字节，存储在 100 ~ 107 字节。在数据库正常关闭时，会将这串字节，拷贝到第一页的 108 ~ 115 字节。
+
+这样数据库在每次启动时，就会检查第一页两处的字节是否相同，以此来判断上一次是否正常关闭。如果是异常关闭，就需要执行数据的恢复流程。
+
+❓为什么是100开始，原作者没解释，看看后面有没有伏笔吧
+
+##### 普通页
+
+结构为: [0:1] [2:8191]
+
+其中前两位是偏移量，后面为数据，偏移量表示这一页的空闲位置的偏移，只需要一个short类型数就可以记录
+
+
+
+**核心操作就是在普通页中写入数据，原理简单，基于offset进行System.arraycopy就行**
+
+❓竟然没有页面数据的读取？？神奇
+

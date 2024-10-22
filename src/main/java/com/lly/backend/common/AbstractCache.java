@@ -17,7 +17,6 @@ public abstract class AbstractCache<T> {
     private HashMap<Long, Integer> references;    // 引用计数
     private HashMap<Long, Boolean> getting;        // 记录资源是否正在从数据源获取中（从数据源获取资源是一个相对费时的操作）
 
-
     private int maxResource;    // 缓存的最大缓存资源数
     private int count = 0;    // 缓存中元素的个数
     private Lock lock;    // 用于保护缓存的锁
