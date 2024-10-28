@@ -21,4 +21,12 @@ public class Parser {
     public static short offsetByte2Short(byte[] bytes) {
         return ByteBuffer.wrap(bytes, 0, 2).getShort();
     }
+
+    public static byte[] int2Byte(int i) {
+        return ByteBuffer.allocate(Integer.SIZE / Byte.SIZE).putInt(i).array();
+    }
+
+    public static int getInt(byte[] buf) {
+        return ByteBuffer.wrap(buf, 0, 4).getInt();
+    }
 }
