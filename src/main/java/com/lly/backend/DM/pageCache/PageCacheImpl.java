@@ -127,7 +127,7 @@ public class PageCacheImpl extends AbstractCache<Page> implements PageCache {
     }
 
     /*
-     *根据页号截断数据库文件
+     *根据页号截断缓存文件
      */
     @Override
     public void truncateByPgno(int maxPgno) {
@@ -138,7 +138,6 @@ public class PageCacheImpl extends AbstractCache<Page> implements PageCache {
             Error.error(e);
         }
         pageNumbers.set(maxPgno);
-
     }
 
     /*

@@ -29,4 +29,8 @@ public class Parser {
     public static int getInt(byte[] buf) {
         return ByteBuffer.wrap(buf, 0, 4).getInt();
     }
+
+    public static short getShort(byte[] buf) {
+        return ByteBuffer.wrap(buf, 0, 2).getShort();
+    }
 }
