@@ -1,10 +1,13 @@
 package com.lly.backend.DM;
 
+import com.google.common.primitives.Bytes;
+import com.lly.backend.DM.dataItem.DataItem;
 import com.lly.backend.DM.logger.Logger;
 import com.lly.backend.DM.page.Page;
 import com.lly.backend.DM.page.PageNormal;
 import com.lly.backend.DM.pageCache.PageCache;
 import com.lly.backend.TM.TransactionManager;
+import com.lly.backend.common.MySubArray;
 import com.lly.common.utils.Error;
 import com.lly.common.utils.Parser;
 
@@ -31,6 +34,7 @@ public class Recover {
     private static final int OF_INSERT_RAW = OF_INSERT_OFFSET+2;//15
 
 
+
     static class InsertLogInfo {
         long xid;
         int pgno;
@@ -44,7 +48,7 @@ public class Recover {
         byte[] oldRaw;
         byte[] newRaw;
     }
-    public  void recover(TransactionManager tm, Logger lg, PageCache pc) {
+    public static void recover(TransactionManager tm, Logger lg, PageCache pc) {
         // 开始恢复过程
         System.out.println("Recovering...");
 
@@ -229,6 +233,27 @@ public class Recover {
 
     private static boolean isInsertLog(byte[] log) {
         return log[0] == LOG_TYPE_INSERT;
+    }
+
+    /*
+     *生成一条insert日志
+     */
+    public static byte[] insertLog(long xid, Page pg, byte[] raw) {
+        byte[] logTypeRaw = {LOG_TYPE_INSERT};
+        byte[] xidRaw = Parser.long2Byte(xid);
+        byte[] pgnoRaw = Parser.int2Byte(pg.getPageNumber());
+        byte[] offsetRaw = Parser.short2Byte(PageNormal.getFSO(pg));
+        return Bytes.concat(logTypeRaw, xidRaw, pgnoRaw, offsetRaw, raw);
+    }
+
+    public static byte[] updateLog(long xid, DataItem di) {
+        byte[] logType = {LOG_TYPE_UPDATE};
+        byte[] xidRaw = Parser.long2Byte(xid);
+        byte[] uidRaw = Parser.long2Byte(di.getUid());
+        byte[] oldRaw = di.getOldRaw();
+        MySubArray raw = di.getRaw();
+        byte[] newRaw = Arrays.copyOfRange(raw.raw, raw.start, raw.end);
+        return Bytes.concat(logType, xidRaw, uidRaw, oldRaw, newRaw);
     }
 
 
