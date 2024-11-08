@@ -21,6 +21,7 @@ public class TransactionManagerImpl implements TransactionManager{
     private static final byte FIELD_TRAN_ACTIVE   = 0;
     private static final byte FIELD_TRAN_COMMITTED = 1;
     private static final byte FIELD_TRAN_ABORTED  = 2;
+
     // 超级事务，永远为commited状态
     public static final long SUPER_XID = 0;
     // XID 文件后缀

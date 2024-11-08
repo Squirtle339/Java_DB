@@ -16,7 +16,8 @@ import com.google.common.primitives.Bytes;
 
 public class LoggerImpl implements Logger{
 
-    private static final int SEED = 131;
+    // 随机数种子防止hash碰撞
+    private static final int SEED = 13331;
     
     public static final String LOG_SUFFIX = ".log";
 

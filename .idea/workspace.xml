@@ -4,14 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e31cd80a-9be0-4e7c-9183-895ade19f7d2" name="更改" comment="实现DM页面索引">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/lly/common/utils/Types.java" afterDir="false" />
+    <list default="true" id="e31cd80a-9be0-4e7c-9183-895ade19f7d2" name="更改" comment="DM收尾，实现DataManager">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/lly/backend/VM/Entry.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/lly/backend/VM/LockTable.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/lly/backend/VM/Transaction.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/lly/backend/VM/VersionManager.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/lly/backend/VM/VersionManagerImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/lly/backend/VM/Visibility.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lly/backend/DM/DataManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lly/backend/DM/DataManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lly/backend/DM/DataManagerImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lly/backend/DM/DataManagerImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lly/backend/DM/Recover.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lly/backend/DM/Recover.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lly/backend/DM/dataItem/DataItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lly/backend/DM/dataItem/DataItem.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lly/backend/DM/dataItem/DataItemImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lly/backend/DM/dataItem/DataItemImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/lly/backend/DM/logger/LoggerImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lly/backend/DM/logger/LoggerImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/lly/backend/TM/TransactionManagerImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lly/backend/TM/TransactionManagerImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -61,32 +63,32 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Maven. [org.apache.maven.plugins:maven-archetype-plugin:RELEASE:generate].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.Java_DB [clean].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.Java_DB [compile].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.Java_DB [install].executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/Java_study/Java_DB&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;模块&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;MavenSettings&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;,
-    &quot;应用程序.App.executor&quot;: &quot;Run&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Maven. [org.apache.maven.plugins:maven-archetype-plugin:RELEASE:generate].executor": "Run",
+    "Maven.Java_DB [clean].executor": "Run",
+    "Maven.Java_DB [compile].executor": "Run",
+    "Maven.Java_DB [install].executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "D:/Java_study/Java_DB",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "模块",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "editor.preferences.fonts.default",
+    "vue.rearranger.settings.migration": "true",
+    "应用程序.App.executor": "Run"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\Java_study\Java_DB\src\main\java\com\lly\backend\DM" />
@@ -137,7 +139,8 @@
       <workItem from="1729753502583" duration="12664000" />
       <workItem from="1730188641016" duration="9484000" />
       <workItem from="1730345138374" duration="9999000" />
-      <workItem from="1730711903318" duration="16691000" />
+      <workItem from="1730711903318" duration="20908000" />
+      <workItem from="1730884512734" duration="11209000" />
     </task>
     <task id="LOCAL-00001" summary="init submit">
       <option name="closed" value="true" />
@@ -211,7 +214,15 @@
       <option name="project" value="LOCAL" />
       <updated>1730726095091</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="DM收尾，实现DataManager">
+      <option name="closed" value="true" />
+      <created>1730812849024</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1730812849024</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -249,6 +260,11 @@
     <MESSAGE value="实现DM日志文件基本操作" />
     <MESSAGE value="实现DM恢复策略" />
     <MESSAGE value="实现DM页面索引" />
-    <option name="LAST_COMMIT_MESSAGE" value="实现DM页面索引" />
+    <MESSAGE value="DM收尾，实现DataManager" />
+    <option name="LAST_COMMIT_MESSAGE" value="DM收尾，实现DataManager" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
 </project>
