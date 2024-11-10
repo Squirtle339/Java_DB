@@ -90,7 +90,7 @@ public abstract class AbstractCache<T> {
         return obj;
     }
     /**
-     * 释放一个缓存资源
+     * 释放一个缓存资源的引用
      * @param key 资源的键
      */
     protected void release(long key) {

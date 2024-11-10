@@ -13,6 +13,7 @@ public class Transaction {
 
     public long xid;
     public int level;
+    //记录事务开始时还是active的事务
     public Map<Long, Boolean> snapshot;
     public Exception err;
     public boolean autoAborted;

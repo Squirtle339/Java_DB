@@ -33,6 +33,13 @@ public class VersionManagerImpl extends AbstractCache<Entry> implements VersionM
     }
 
 
+    /**
+     * 事务读取一个记录的数据
+     * @param xid 事务id
+     * @param uid   记录id
+     * @return  记录的数据
+     * @throws Exception
+     */
     @Override
     public byte[] read(long xid, long uid) throws Exception {
         lock.lock();
@@ -42,7 +49,18 @@ public class VersionManagerImpl extends AbstractCache<Entry> implements VersionM
             throw t.err;
         }
 
-        Entry entry = super.get(uid);
+        //获取entry
+        Entry entry = null;
+        try {
+            entry = super.get(uid);
+        } catch(Exception e) {
+            if(e == ErrorItem.NullEntryException) {
+                return null;
+            } else {
+                throw e;
+            }
+        }
+
         try {
             //判断记录是否对当前事务可见
             if(Visibility.isVisible(tm, t, entry)) {
@@ -51,18 +69,103 @@ public class VersionManagerImpl extends AbstractCache<Entry> implements VersionM
                 return null;
             }
         } finally {
+            //entry缓存的引用计数减一
             entry.release();
         }
     }
 
+
+    /**
+     * 事务把数据包装成entry使用DM插入数据库
+     * @param xid
+     * @param data
+     * @return
+     * @throws Exception
+     */
     @Override
     public long insert(long xid, byte[] data) throws Exception {
-        return 0;
+        lock.lock();
+        Transaction t = activeTransaction.get(xid);
+        lock.unlock();
+
+        if(t.err != null) {
+            throw t.err;
+        }
+        byte[] raw = Entry.wrapEntryRaw(xid, data);
+        return dm.insert(xid, raw);
     }
 
+
+    /**
+     * 事务删除记录
+     * @param xid
+     * @param uid
+     * @return
+     * @throws Exception
+     */
     @Override
     public boolean delete(long xid, long uid) throws Exception {
-        return false;
+        lock.lock();
+        Transaction t = activeTransaction.get(xid);
+        lock.unlock();
+
+        if(t.err != null) {
+            throw t.err;
+        }
+
+        Entry entry = null;
+        try {
+            entry = super.get(uid);
+        } catch(Exception e) {
+            if(e == ErrorItem.NullEntryException) {
+                return false;
+            } else {
+                throw e;
+            }
+        }
+
+        try {
+            //不可见，事务删除记录失败
+            if(!Visibility.isVisible(tm, t, entry)) {
+                return false;
+            }
+
+            Lock l = null;
+            //事务尝试获取记录的锁，在资源分配图中加入一条边，进行死锁检测
+            try {
+                l = lockTable.add(xid, uid);
+            } catch(Exception e) {
+                //发生死锁，事务删除失败，要求事务回滚
+                t.err = ErrorItem.ConcurrentUpdateException;
+                internAbort(xid, true);
+                t.autoAborted = true;
+                throw t.err;
+            }
+
+            if(l != null) {
+                l.lock();
+                l.unlock();
+            }
+
+            if(entry.getXmax() == xid) {
+                return false;
+            }
+            //发生版本跳跃，事务删除失败，要求事务回滚
+            if(Visibility.isVersionSkip(tm, t, entry)) {
+                t.err = ErrorItem.ConcurrentUpdateException;
+                internAbort(xid, true);
+                t.autoAborted = true;
+                throw t.err;
+            }
+            //设置记录的xmax，表示记录被删除
+            entry.setXmax(xid);
+            return true;
+        }
+        finally {
+            //entry缓存的引用计数减一
+            entry.release();
+
+        }
     }
 
     @Override
@@ -80,7 +183,7 @@ public class VersionManagerImpl extends AbstractCache<Entry> implements VersionM
     }
 
 
-    /*
+    /**
     * 提交事务,将事务从活跃事务哈希表中移除
     */
     @Override
@@ -107,7 +210,7 @@ public class VersionManagerImpl extends AbstractCache<Entry> implements VersionM
         tm.commit(xid);
     }
 
-    /*
+    /**
     * 手动终止事务
      */
     @Override
@@ -115,10 +218,15 @@ public class VersionManagerImpl extends AbstractCache<Entry> implements VersionM
         internAbort(xid, false);
     }
 
-    //自动终止事务
+    /**
+     * 事务终止
+     * @param xid
+     * @param autoAborted
+     */
     private void internAbort(long xid, boolean autoAborted) {
         lock.lock();
         Transaction t = activeTransaction.get(xid);
+
         if(!autoAborted) {
             activeTransaction.remove(xid);
         }
@@ -130,7 +238,7 @@ public class VersionManagerImpl extends AbstractCache<Entry> implements VersionM
         tm.abort(xid);
     }
 
-    /*
+    /**
      * 从缓存中获取entry
      */
     @Override
@@ -142,8 +250,18 @@ public class VersionManagerImpl extends AbstractCache<Entry> implements VersionM
         return entry;
     }
 
+    /**
+     * 释放entry所在的dataItem的缓存
+     */
     @Override
     protected void releaseForCache(Entry entry) {
         entry.remove();
+    }
+
+    /**
+     * 释放entry的一个缓存引用计数
+     */
+    public void releaseEntry(Entry entry) {
+        super.release(entry.getUid());
     }
 }
