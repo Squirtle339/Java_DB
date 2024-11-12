@@ -4,13 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e31cd80a-9be0-4e7c-9183-895ade19f7d2" name="更改" comment="VM版本记录实现和可见性判断">
+    <list default="true" id="e31cd80a-9be0-4e7c-9183-895ade19f7d2" name="更改" comment="死锁检测和VM整体实现">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/lly/backend/IM/BPlusTree.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/lly/backend/IM/Node.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lly/backend/VM/LockTable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lly/backend/VM/LockTable.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lly/backend/VM/Transaction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lly/backend/VM/Transaction.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lly/backend/VM/VersionManagerImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lly/backend/VM/VersionManagerImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lly/backend/VM/Visibility.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lly/backend/VM/Visibility.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lly/backend/common/AbstractCache.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lly/backend/common/AbstractCache.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/lly/backend/DM/dataItem/DataItemImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lly/backend/DM/dataItem/DataItemImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -139,7 +137,7 @@
       <workItem from="1730711903318" duration="20908000" />
       <workItem from="1730884512734" duration="12862000" />
       <workItem from="1731136331009" duration="6692000" />
-      <workItem from="1731219333142" duration="1904000" />
+      <workItem from="1731219333142" duration="18596000" />
     </task>
     <task id="LOCAL-00001" summary="init submit">
       <option name="closed" value="true" />
@@ -229,7 +227,15 @@
       <option name="project" value="LOCAL" />
       <updated>1731057404464</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="死锁检测和VM整体实现">
+      <option name="closed" value="true" />
+      <created>1731221334769</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1731221334769</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -269,7 +275,8 @@
     <MESSAGE value="实现DM页面索引" />
     <MESSAGE value="DM收尾，实现DataManager" />
     <MESSAGE value="VM版本记录实现和可见性判断" />
-    <option name="LAST_COMMIT_MESSAGE" value="VM版本记录实现和可见性判断" />
+    <MESSAGE value="死锁检测和VM整体实现" />
+    <option name="LAST_COMMIT_MESSAGE" value="死锁检测和VM整体实现" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

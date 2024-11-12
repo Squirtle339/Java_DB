@@ -80,7 +80,7 @@ public class DataItemImpl implements DataItem{
     }
 
     /*
-     * 释放缓存
+     * 释放缓存的一个引用
      */
     @Override
     public void release() {
