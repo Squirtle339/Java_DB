@@ -1,6 +1,7 @@
 package com.lly.backend.IM;
 
 import com.lly.backend.DM.dataItem.DataItem;
+import com.lly.backend.TM.TransactionManagerImpl;
 import com.lly.backend.common.MySubArray;
 import com.lly.common.utils.Parser;
 
@@ -153,7 +154,7 @@ public class Node {
     }
 
     /**
-     * 寻找当前节点中 key 的下一个key, 如果找不到, 则返回兄弟节点的 UID，供上层继续搜索
+     * 寻找当前节点中第一个大于等于key的键的nodeuid, 如果找不到, 则返回兄弟节点的 UID，供上层继续搜索
      * @param key
      * @return
      */
@@ -162,7 +163,7 @@ public class Node {
         try {
             SearchNextRes res = new SearchNextRes();
             int noKeys = getRawNoKeys(raw);
-            //从前往后遍历，找到第一个大于 key 的 key作为下一个节点
+            //从前往后遍历，找到第一个大于等于 key 的键
             for(int i = 0; i < noKeys; i ++) {
                 long ik = getRawKthKey(raw, i);
                 //key越大，在当前节点的key列表的位置越靠后
@@ -172,7 +173,7 @@ public class Node {
                     return res;
                 }
             }
-            //如果当前key是最大的，则返回她的兄弟节点
+            //如果没找到大于等于key的，则返回她的兄弟节点
             res.uid = 0;
             res.BroUid = getRawBro(raw);
             return res;
@@ -183,7 +184,109 @@ public class Node {
     }
 
 
+    class InsertAndSplitRes {
+        long broUid, newSon, newKey;
+    }
 
+
+    public InsertAndSplitRes insertAndSplit(long uid, long key) throws Exception {
+        boolean success = false;
+        Exception err = null;
+        InsertAndSplitRes res = new InsertAndSplitRes();
+
+        dataItem.before();
+        try {
+            success = insert(uid, key);
+            if(!success) {
+                res.broUid = getRawBro(raw);
+                return res;
+            }
+            if (neddSplit()) {
+                try{
+                    SplitRes r = split();
+                    res.newSon = r.newSon;
+                    res.newKey = r.newKey;
+                    return res;
+                } catch (Exception e) {
+                    err = e;
+                    throw e;
+                }
+            }
+            else {
+                return res;
+            }
+        } finally {
+            if(err==null&&success) {
+                dataItem.after(TransactionManagerImpl.SUPER_XID);
+            }else {
+                //如果插入失败，或者分裂失败，则回滚
+                dataItem.unBefore();
+            }
+        }
+    }
+
+    class SplitRes {
+        long newSon, newKey;
+    }
+
+
+    private SplitRes split() throws Exception {
+        MySubArray nodeRaw = new MySubArray(new byte[NODE_SIZE], 0, NODE_SIZE);
+        setRawIsLeaf(nodeRaw, getRawIfLeaf(raw));
+        setRawNoKeys(nodeRaw, BALANCE_NUMBER);
+        setRawBro(nodeRaw, getRawBro(raw));
+        copyRawFromKth(raw, nodeRaw, BALANCE_NUMBER);
+        long son = tree.dm.insert(TransactionManagerImpl.SUPER_XID, nodeRaw.raw);
+
+        setRawNoKeys(raw, BALANCE_NUMBER);
+        setRawBro(raw, son);
+
+        SplitRes res = new SplitRes();
+        res.newSon = son;
+        res.newKey = getRawKthKey(nodeRaw, 0);
+        return res;
+    }
+
+    private boolean neddSplit() {
+        return BALANCE_NUMBER*2 == getRawNoKeys(raw);
+
+    }
+
+    private boolean insert(long uid, long key) {
+        //找到第一个大于等于key 的的位置
+        int noKeys = getRawNoKeys(raw);
+        int kth = 0;
+        while(kth < noKeys) {
+            long ik = getRawKthKey(raw, kth);
+            if(ik < key) {
+                kth ++;
+            } else {
+                break;
+            }
+        }
+
+        //如果当前节点的所有键都小于key，并且有兄弟节点，则应该需要在兄弟节点寻找插入点，向上层返回false
+        if(kth == noKeys && getRawBro(raw) != 0) return false;
+
+        //当前节点已经是叶子节点，直接插入
+        if(getRawIfLeaf(raw)) {
+            shiftRawKth(raw, kth);
+            setRawKthKey(raw, key, kth);
+            setRawKthSon(raw, uid, kth);
+            setRawNoKeys(raw, noKeys+1);
+        }
+        //是内部节点
+        else {
+            long kk = getRawKthKey(raw, kth);
+            setRawKthKey(raw, key, kth);
+            shiftRawKth(raw, kth+1);
+            setRawKthKey(raw, kk, kth+1);
+            setRawKthSon(raw, uid, kth+1);
+            setRawNoKeys(raw, noKeys+1);
+        }
+        return true;
+
+    }
 
 
     /**

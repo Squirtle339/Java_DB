@@ -5,6 +5,7 @@ import com.lly.backend.DM.dataItem.DataItem;
 import com.lly.backend.TM.TransactionManagerImpl;
 import com.lly.backend.common.MySubArray;
 import com.lly.common.utils.Parser;
+import com.lly.backend.IM.Node.InsertAndSplitRes;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -50,19 +51,18 @@ public class BPlusTree {
 
     public List<Long> search(long key) throws Exception {
         return searchRange(key, key);
-
     }
 
     /**
-     * 在B+树搜索指定键值范围内的叶子节点中的uid列表
+     * 在B+树搜索指定键值范围内的键值对应的uid列表
      * @param leftKey
      * @param rightKey
      * @return 返回指定范围的键值对应的uid列表
      */
     public List<Long> searchRange(long leftKey, long rightKey) throws Exception {
         long rootUid = getRootUid();
-        //从根节点开始搜索，找到leftKey节点的最左叶子
-        long leafUid = searchLeaf(rootUid, leftKey);
+        //从根节点开始搜索，找到leftKey对应的nodeUid
+        long leafUid = getUidByKey(rootUid, leftKey);
         List<Long> uids = new ArrayList<>();
         while(true) {
             Node leaf = Node.loadNode(this, leafUid);
@@ -81,13 +81,13 @@ public class BPlusTree {
 
 
     /**
-     *
-     * @param nodeUid
-     * @param key
-     * @return
+     * 读取key对应的nodeUid
+     * @param nodeUid 查找的起始节点
+     * @param key 键
+     * @return nodeUid
      * @throws Exception
      */
-    private long searchLeaf(long nodeUid, long key) throws Exception {
+    private long getUidByKey(long nodeUid, long key) throws Exception {
         Node node = Node.loadNode(this, nodeUid);
         boolean isLeaf = node.isLeaf();
         node.release();
@@ -95,32 +95,36 @@ public class BPlusTree {
         if(isLeaf) {
             return node.uid;
         } else {
-            //当前节点不是叶子节点，继续搜索下一个节点
-            long nextUid = searchNext(nodeUid, key);
-            return searchLeaf(nextUid, key);
+            //当前节点不是叶子节点，向下找到key所在的叶子节点
+            long nextUid = searchLeaf(nodeUid, key);
+            return getUidByKey(nextUid, key);
         }
 
     }
 
     /**
-     * 寻找当前key的下一个key
+     * 在B+树从某节点搜索键key应该插入的叶子节点
      * @param nodeUid 开始搜索的起始节点
      * @param key 当前的key
-     * @return
+     * @return 返回大于等于key的键指向的节点的uid
      * @throws Exception
      */
-    private long searchNext(long nodeUid, long key) throws Exception {
+    private long searchLeaf(long nodeUid, long key) throws Exception {
         while (true){
             Node node = Node.loadNode(this, nodeUid);
-            //尝试在当前节点中查找到key的下一个节点
+            //尝试在当前节点找到第一个大于等于key的键
             Node.SearchNextRes searchNextRes = node.searchNext(key);
             node.release();
             if(searchNextRes.uid != 0) return searchNextRes.uid;
-            //当前节点没有找到，在兄弟节点中继续查找
+            //todo:当前节点没有找到，在兄弟节点中继续查找（如果是b+树，怎么可能出现这种情况呢）
             nodeUid = searchNextRes.BroUid;
         }
     }
 
+    /**
+     * 获取根节点的uid
+     * @return
+     */
     private long getRootUid() {
         bootLock.lock();
         try {
@@ -153,12 +157,57 @@ public class BPlusTree {
      */
     public void insert(long key, long uid) throws Exception {
         long rootUid = getRootUid();
-        insert(rootUid, key, uid);
+        InsertRes res= insert(rootUid, key, uid);
+
+        if(res.newNode != 0) {
+            updateRootUid(rootUid, res.newNode, res.newKey);
+        }
+    }
+    class InsertRes {
+        long newNode, newKey;
+    }
+
+
+    private InsertRes insert(long nodeUid, long key, long uid) throws Exception {
+        Node node = Node.loadNode(this, nodeUid);
+        boolean isLeaf = node.isLeaf();
+        node.release();
+        InsertRes res = null;
+
+        if (isLeaf){
+            //在叶子节点中插入
+            res = insertAndSplit(nodeUid, uid, key);
+        }
+        else{
+            //向下寻找应该插入的叶子节点
+            long next = searchLeaf(nodeUid, key);
+            InsertRes ir = insert(next, uid, key);
+            if(ir.newNode != 0) {
+                //分裂了新节点，将新节点插入
+                res = insertAndSplit(nodeUid, ir.newNode, ir.newKey);
+            } else {
+                res = new InsertRes();
+            }
+        }
+        return res;
 
     }
 
-    private void insert(long rootUid, long key, long uid) {
-
+    private InsertRes insertAndSplit(long nodeUid, long uid, long key) throws Exception {
+        while(true) {
+            Node node = Node.loadNode(this, nodeUid);
+            InsertAndSplitRes iasr = node.insertAndSplit(uid, key);
+            node.release();
+            if(iasr.broUid != 0) {
+                //在兄弟节点中继续插入（既让都已经逐层向下找到插入的位置了，就不会出现）
+                nodeUid = iasr.broUid;
+            } else {
+                InsertRes res = new InsertRes();
+                res.newNode = iasr.newSon;
+                res.newKey = iasr.newKey;
+                return res;
+            }
+        }
     }
 
 
