@@ -21,6 +21,7 @@ public class sqlParser {
         Exception statementErr = null;
 
         try{
+
             statementObj = switch (token) {
                 case "begin" -> parseBegin(tokenizer);
                 case "commit" -> parseCommit(tokenizer);

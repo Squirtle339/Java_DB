@@ -36,7 +36,7 @@ public class VersionManagerImpl extends AbstractCache<Entry> implements VersionM
     /**
      * 事务读取一个记录的数据
      * @param xid 事务id
-     * @param uid   记录id
+     * @param uid 记录id
      * @return  记录的数据
      * @throws Exception
      */
@@ -168,6 +168,11 @@ public class VersionManagerImpl extends AbstractCache<Entry> implements VersionM
         }
     }
 
+    /**
+     * 开启事务管理器
+     * @param level 事务隔离级别,1为可重复读，0为读已提交
+     * @return
+     */
     @Override
     public long begin(int level) {
         lock.lock();

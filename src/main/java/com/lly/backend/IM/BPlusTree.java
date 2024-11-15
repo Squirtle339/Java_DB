@@ -21,8 +21,8 @@ public class BPlusTree {
 
     /**
      * 创建一个新的B+树,根节点为一个空的叶子节点
-     * @param dm
-     * @return
+     * @param dm dataManager
+     * @return 返回bootUid（存rootUid的地方）
      * @throws Exception
      */
     public static long create(DataManager dm) throws Exception {
