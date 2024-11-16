@@ -240,7 +240,7 @@ public class sqlParser {
         if(!isName(field)) {
             throw ErrorItem.InvalidCommandException;
         }
-        exp.field = field;
+        exp.fieldname = field;
         tokenizer.pop();
 
         String op = tokenizer.peek();

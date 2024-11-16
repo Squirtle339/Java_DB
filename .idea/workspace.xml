@@ -4,20 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e31cd80a-9be0-4e7c-9183-895ade19f7d2" name="更改" comment="实现sql语句简易解析器">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/lly/backend/TBM/Booter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/lly/backend/TBM/Field.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/lly/backend/TBM/Result/BeginRes.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/lly/backend/TBM/Result/FieldCalRes.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/lly/backend/TBM/Result/ParseStringRes.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/lly/backend/TBM/Table.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/lly/backend/TBM/TableManager.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/lly/backend/TBM/TableManagerImpl.java" afterDir="false" />
+    <list default="true" id="e31cd80a-9be0-4e7c-9183-895ade19f7d2" name="更改" comment="数据表与字段的管理实现，以及TBM部分接口实现">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lly/backend/IM/BPlusTree.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lly/backend/IM/BPlusTree.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lly/backend/VM/VersionManagerImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lly/backend/VM/VersionManagerImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/lly/backend/TBM/Field.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lly/backend/TBM/Field.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/lly/backend/TBM/Table.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lly/backend/TBM/Table.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/lly/backend/TBM/TableManagerImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lly/backend/TBM/TableManagerImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/lly/backend/sqlParser/sqlParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lly/backend/sqlParser/sqlParser.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lly/common/utils/Parser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lly/common/utils/Parser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/lly/backend/sqlParser/statement/Select.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lly/backend/sqlParser/statement/Select.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/lly/backend/sqlParser/statement/SingleExpression.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lly/backend/sqlParser/statement/SingleExpression.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -156,7 +150,7 @@
       <workItem from="1730884512734" duration="12862000" />
       <workItem from="1731136331009" duration="6692000" />
       <workItem from="1731219333142" duration="18596000" />
-      <workItem from="1731463866558" duration="32823000" />
+      <workItem from="1731463866558" duration="38571000" />
     </task>
     <task id="LOCAL-00001" summary="init submit">
       <option name="closed" value="true" />
@@ -278,7 +272,15 @@
       <option name="project" value="LOCAL" />
       <updated>1731576787077</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="数据表与字段的管理实现，以及TBM部分接口实现">
+      <option name="closed" value="true" />
+      <created>1731665067952</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1731665067952</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -321,7 +323,8 @@
     <MESSAGE value="死锁检测和VM整体实现" />
     <MESSAGE value="基于B+树实现IM索引的插入和查" />
     <MESSAGE value="实现sql语句简易解析器" />
-    <option name="LAST_COMMIT_MESSAGE" value="实现sql语句简易解析器" />
+    <MESSAGE value="数据表与字段的管理实现，以及TBM部分接口实现" />
+    <option name="LAST_COMMIT_MESSAGE" value="数据表与字段的管理实现，以及TBM部分接口实现" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

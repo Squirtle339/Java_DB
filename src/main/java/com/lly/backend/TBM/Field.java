@@ -3,13 +3,16 @@ package com.lly.backend.TBM;
 
 import com.google.common.primitives.Bytes;
 import com.lly.backend.IM.BPlusTree;
+import com.lly.backend.TBM.Result.FieldCalRes;
 import com.lly.backend.TBM.Result.ParseStringRes;
 import com.lly.backend.TM.TransactionManagerImpl;
+import com.lly.backend.sqlParser.statement.SingleExpression;
 import com.lly.common.ErrorItem;
 import com.lly.common.utils.Error;
 import com.lly.common.utils.Parser;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * field 表示字段信息
@@ -158,5 +161,83 @@ public class Field {
                 break;
         }
         return key;
+    }
+
+
+    public FieldCalRes calExp(SingleExpression exp) {
+        Object v = null;
+        FieldCalRes res = new FieldCalRes();
+        switch(exp.compareOp) {
+            case "=":
+                v=string2Value(exp.value);
+                res.left = value2key(v);
+                res.right = res.left;
+                break;
+            case "<":
+                //todo:
+                res.left = 0;
+                v=string2Value(exp.value);
+                res.right = value2key(v);
+                if(res.right > 0) {
+                    res.right --;
+                }
+                break;
+            case ">":
+                res.right = Long.MAX_VALUE;
+                v = string2Value(exp.value);
+                res.left = value2key(v) + 1;
+                break;
+        }
+        return res;
+    }
+
+    public List<Long> search(long left, long right) throws Exception {
+        return bt.searchRange(left, right);
+    }
+
+    class ParseValueRes {
+        Object v;
+        int shift;
+    }
+
+    /**
+     * 解析字段的值
+     * @param raw 基于偏移截断的字段值
+     * @return 解析结果：值和本值的长度
+     */
+    public ParseValueRes parserValue(byte[] raw) {
+        ParseValueRes res = new ParseValueRes();
+        switch(fieldType) {
+            case "int32":
+                res.v = Parser.getInt(Arrays.copyOf(raw, 4));
+                res.shift = 4;
+                break;
+            case "int64":
+                res.v = Parser.getLong(Arrays.copyOf(raw, 8));
+                res.shift = 8;
+                break;
+            case "string":
+                ParseStringRes r = Parser.parseString(raw);
+                res.v = r.str;
+                res.shift = r.next;
+                break;
+        }
+        return res;
+    }
+
+    public String printValue(Object v) {
+        String str = null;
+        switch(fieldType) {
+            case "int32":
+                str = String.valueOf((int)v);
+                break;
+            case "int64":
+                str = String.valueOf((long)v);
+                break;
+            case "string":
+                str = (String)v;
+                break;
+        }
+        return str;
     }
 }

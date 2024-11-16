@@ -2,10 +2,13 @@ package com.lly.backend.TBM;
 
 
 import com.google.common.primitives.Bytes;
+import com.lly.backend.TBM.Result.FieldCalRes;
 import com.lly.backend.TBM.Result.ParseStringRes;
 import com.lly.backend.TM.TransactionManagerImpl;
 import com.lly.backend.sqlParser.statement.Create;
 import com.lly.backend.sqlParser.statement.Insert;
+import com.lly.backend.sqlParser.statement.Select;
+import com.lly.backend.sqlParser.statement.Where;
 import com.lly.common.ErrorItem;
 import com.lly.common.utils.Error;
 import com.lly.common.utils.Parser;
@@ -135,4 +138,128 @@ public class Table {
         }
         return raw;
     }
+
+    /**
+     * select
+     */
+    public String read(long xid, Select select) throws Exception {
+        List<Long> uids = parseWhere(select.where);
+        StringBuilder sb = new StringBuilder();
+        for (Long uid : uids) {
+            byte[] raw = ((TableManagerImpl)tbm).vm.read(xid, uid);
+            if(raw == null) continue;
+            //提取字节形式行数据
+            Map<String, Object> entry = parseEntry(raw);
+            sb.append(printEntry(entry)).append("\n");
+        }
+        return sb.toString();
+    }
+
+    /**
+     * 解析字节形式的行数据
+     * @param raw 一行数据，字节数组格式
+     * @return Map<fieldName,value>
+     */
+    private Map<String, Object> parseEntry(byte[] raw) {
+        int pos = 0;
+        Map<String, Object> entry = new HashMap<>();
+        for (Field field : fields) {
+            Field.ParseValueRes r =field.parserValue(Arrays.copyOfRange(raw, pos, raw.length));
+            entry.put(field.fieldName, r.v);
+            pos += r.shift;
+        }
+        return entry;
+    }
+
+    private String printEntry(Map<String, Object> entry) {
+        StringBuilder sb = new StringBuilder("[");
+        for (int i = 0; i < fields.size(); i++) {
+            Field field = fields.get(i);
+            sb.append(field.printValue(entry.get(field.fieldName)));
+            if(i == fields.size()-1) {
+                sb.append("]");
+            } else {
+                sb.append(", ");
+            }
+        }
+        return sb.toString();
+    }
+
+    private List<Long> parseWhere(Where where) throws Exception {
+        long l0=0, r0=0, l1=0, r1=0;
+        boolean single = false;
+        Field fd = null;
+        if(where==null) {
+            //找到第一个有索引的字段
+            for (Field field : fields) {
+                if(field.isIndexed()) {
+                    fd = field;
+                    break;
+                }
+            }
+            l0 = 0;
+            r0 = Long.MAX_VALUE;
+
+        }else{
+            for(Field field: fields){
+                if(field.fieldName.equals(where.singleExp1.fieldname)){
+                    if (!field.isIndexed()){
+                        throw  ErrorItem.FieldNotIndexedException;
+                    }
+                    fd = field;
+                    break;
+                }
+            }
+            if(fd == null) { // 如果没有找到匹配的字段，抛出异常
+                throw ErrorItem.FieldNotFoundException;
+            }
+            CalWhereRes res = calWhere(fd, where);
+            l0 = res.l0; r0 = res.r0;
+            l1 = res.l1; r1 = res.r1;
+            single = res.single;
+        }
+        List<Long> uids = fd.search(l0, r0);
+        if(!single){
+            List<Long> tmp = fd.search(l1, r1);
+            uids.addAll(tmp);
+        }
+        return uids;
+    }
+    class CalWhereRes {
+        long l0, r0, l1, r1;
+        boolean single;
+    }
+
+    private CalWhereRes calWhere(Field fd, Where where) throws Exception {
+        CalWhereRes res = new CalWhereRes();
+        switch(where.logicOp) {
+            case "":
+                res.single = true;
+                FieldCalRes r = fd.calExp(where.singleExp1);
+                res.l0 = r.left; res.r0 = r.right;
+                break;
+            case "or":
+                res.single = false;
+                r=fd.calExp(where.singleExp1);
+                res.l0 = r.left; res.r0 = r.right;
+                r=fd.calExp(where.singleExp2);
+                res.l1 = r.left; res.r1 = r.right;
+                break;
+            case "and":
+                res.single = true;
+                r = fd.calExp(where.singleExp1);
+                res.l0 = r.left; res.r0 = r.right;
+                r = fd.calExp(where.singleExp2);
+                res.l1 = r.left; res.r1 = r.right;
+                if(res.l1 > res.l0) res.l0 = res.l1;
+                if(res.r1 < res.r0) res.r0 = res.r1;
+                break;
+            default:
+                throw ErrorItem.InvalidLogOpException;
+        }
+        return res;
+    }
+
+
+
 }

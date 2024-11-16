@@ -130,8 +130,16 @@ public class TableManagerImpl implements TableManager{
 
     @Override
     public byte[] read(long xid, Select select) throws Exception {
-        return new byte[0];
+        lock.lock();
+        Table table = tableCache.get(select.tableName);
+        lock.unlock();
+        if(table == null) {
+            throw ErrorItem.TableNotFoundException;
+        }
+        return table.read(xid, select).getBytes();
     }
+
+
 
     @Override
     public byte[] update(long xid, Update update) throws Exception {
