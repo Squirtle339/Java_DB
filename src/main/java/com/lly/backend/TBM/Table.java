@@ -5,10 +5,7 @@ import com.google.common.primitives.Bytes;
 import com.lly.backend.TBM.Result.FieldCalRes;
 import com.lly.backend.TBM.Result.ParseStringRes;
 import com.lly.backend.TM.TransactionManagerImpl;
-import com.lly.backend.sqlParser.statement.Create;
-import com.lly.backend.sqlParser.statement.Insert;
-import com.lly.backend.sqlParser.statement.Select;
-import com.lly.backend.sqlParser.statement.Where;
+import com.lly.backend.sqlParser.statement.*;
 import com.lly.common.ErrorItem;
 import com.lly.common.utils.Error;
 import com.lly.common.utils.Parser;
@@ -155,36 +152,13 @@ public class Table {
         return sb.toString();
     }
 
+
     /**
-     * 解析字节形式的行数据
-     * @param raw 一行数据，字节数组格式
-     * @return Map<fieldName,value>
+     * 解析where条件，找到符合条件的行数据的uid
+     * @param where
+     * @return List<uid>
+     * @throws Exception
      */
-    private Map<String, Object> parseEntry(byte[] raw) {
-        int pos = 0;
-        Map<String, Object> entry = new HashMap<>();
-        for (Field field : fields) {
-            Field.ParseValueRes r =field.parserValue(Arrays.copyOfRange(raw, pos, raw.length));
-            entry.put(field.fieldName, r.v);
-            pos += r.shift;
-        }
-        return entry;
-    }
-
-    private String printEntry(Map<String, Object> entry) {
-        StringBuilder sb = new StringBuilder("[");
-        for (int i = 0; i < fields.size(); i++) {
-            Field field = fields.get(i);
-            sb.append(field.printValue(entry.get(field.fieldName)));
-            if(i == fields.size()-1) {
-                sb.append("]");
-            } else {
-                sb.append(", ");
-            }
-        }
-        return sb.toString();
-    }
-
     private List<Long> parseWhere(Where where) throws Exception {
         long l0=0, r0=0, l1=0, r1=0;
         boolean single = false;
@@ -225,6 +199,85 @@ public class Table {
         }
         return uids;
     }
+
+    /**
+     * 解析字节形式的行数据
+     * @param raw 一行数据，字节数组格式
+     * @return Map<fieldName,value>
+     */
+    private Map<String, Object> parseEntry(byte[] raw) {
+        int pos = 0;
+        Map<String, Object> entry = new HashMap<>();
+        for (Field field : fields) {
+            Field.ParseValueRes r =field.parserValue(Arrays.copyOfRange(raw, pos, raw.length));
+            entry.put(field.fieldName, r.v);
+            pos += r.shift;
+        }
+        return entry;
+    }
+
+    private String printEntry(Map<String, Object> entry) {
+        StringBuilder sb = new StringBuilder("[");
+        for (int i = 0; i < fields.size(); i++) {
+            Field field = fields.get(i);
+            sb.append(field.printValue(entry.get(field.fieldName)));
+            if(i == fields.size()-1) {
+                sb.append("]");
+            } else {
+                sb.append(", ");
+            }
+        }
+        return sb.toString();
+    }
+
+    public int update(long xid, Update update) throws Exception {
+        List<Long> uids = parseWhere(update.where);
+        //找到要更新的字段
+        Field fd = null;
+        for (Field f : fields) {
+            if(f.fieldName.equals(update.fieldName)) {
+                fd = f;
+                break;
+            }
+        }
+        if(fd == null) {
+            throw ErrorItem.FieldNotFoundException;
+        }
+
+        Object value = fd.string2Value(update.value);
+        int count = 0;
+        for (Long uid:uids){
+            byte[] raw = ((TableManagerImpl)tbm).vm.read(xid, uid);
+            if(raw == null) continue;
+            ((TableManagerImpl)tbm).vm.delete(xid, uid);
+
+            Map<String, Object> entry = parseEntry(raw);
+            entry.put(fd.fieldName, value);
+            raw = entry2Raw(entry);
+
+            long newUid = ((TableManagerImpl)tbm).vm.insert(xid, raw);
+            count++;
+            for (Field field : fields) {
+                if(field.isIndexed()) {
+                    field.insert(entry.get(field.fieldName), newUid);
+                }
+            }
+        }
+        return count;
+
+    }
+
+    public int delete(long xid, Delete delete) throws Exception {
+        List<Long> uids = parseWhere(delete.where);
+        int count = 0;
+        for (Long uid : uids) {
+            if(((TableManagerImpl)tbm).vm.delete(xid, uid)) {
+                count ++;
+            }
+        }
+        return count;
+    }
+
     class CalWhereRes {
         long l0, r0, l1, r1;
         boolean single;

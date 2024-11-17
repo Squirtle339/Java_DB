@@ -143,11 +143,25 @@ public class TableManagerImpl implements TableManager{
 
     @Override
     public byte[] update(long xid, Update update) throws Exception {
-        return new byte[0];
+        lock.lock();
+        Table table = tableCache.get(update.tableName);
+        lock.unlock();
+        if(table == null) {
+            throw ErrorItem.TableNotFoundException;
+        }
+        int count = table.update(xid, update);
+        return ("update " + count).getBytes();
     }
 
     @Override
     public byte[] delete(long xid, Delete delete) throws Exception {
-        return new byte[0];
+        lock.lock();
+        Table table = tableCache.get(delete.tableName);
+        lock.unlock();
+        if(table == null) {
+            throw ErrorItem.TableNotFoundException;
+        }
+        int count = table.delete(xid, delete);
+        return ("delete " + count).getBytes();
     }
 }

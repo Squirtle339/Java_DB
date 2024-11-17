@@ -164,7 +164,6 @@ public class VersionManagerImpl extends AbstractCache<Entry> implements VersionM
         finally {
             //entry缓存的引用计数减一
             entry.release();
-
         }
     }
 

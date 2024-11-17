@@ -195,6 +195,11 @@ public class Field {
         return bt.searchRange(left, right);
     }
 
+    public void insert(Object value, long uid) throws Exception {
+        long key = value2key(value);
+        bt.insert(key, uid);
+    }
+
     class ParseValueRes {
         Object v;
         int shift;
