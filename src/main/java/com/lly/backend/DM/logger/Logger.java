@@ -19,6 +19,7 @@ public interface Logger {
 
     public static Logger create(String path) {
         File f = new File(path+LoggerImpl.LOG_SUFFIX);
+        System.out.println("log file path: " + f.getAbsolutePath());
         try {
             if(!f.createNewFile()) {
                 Error.error(ErrorItem.FileExistsException);
@@ -51,6 +52,7 @@ public interface Logger {
 
     public static Logger open(String path) {
         File f = new File(path+LoggerImpl.LOG_SUFFIX);
+        System.out.println("log file path: " + f.getAbsolutePath());
         if (!f.exists()) {
             Error.error(ErrorItem.FileNotExistsException);
         }

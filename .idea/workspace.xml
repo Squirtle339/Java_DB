@@ -4,12 +4,23 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e31cd80a-9be0-4e7c-9183-895ade19f7d2" name="更改" comment="TBM的select接口实现">
+    <list default="true" id="e31cd80a-9be0-4e7c-9183-895ade19f7d2" name="更改" comment="TBM的剩余接口实现">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/lly/backend/server/Executor.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/lly/backend/server/Launcher.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/lly/backend/server/Server.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/lly/backend/transport/Encoder.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/lly/backend/transport/Package.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/lly/backend/transport/Packager.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/lly/backend/transport/Transporter.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/lly/client/Client.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/lly/client/Launcher.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/lly/client/RoundTripper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/lly/client/Shell.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lly/backend/TBM/Field.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lly/backend/TBM/Field.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lly/backend/TBM/Table.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lly/backend/TBM/Table.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lly/backend/TBM/TableManagerImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lly/backend/TBM/TableManagerImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lly/backend/VM/VersionManagerImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lly/backend/VM/VersionManagerImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/lly/backend/DM/logger/Logger.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lly/backend/DM/logger/Logger.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/lly/backend/VM/LockTable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lly/backend/VM/LockTable.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/lly/AppTest.java" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -71,7 +82,7 @@
     "git-widget-placeholder": "main",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "D:/Java_study/Java_DB/src/main/java/com/lly/backend/sqlParser",
+    "last_opened_file_path": "D:/Java_study/Java_DB/src/test/java/com/lly",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -80,9 +91,11 @@
     "project.structure.last.edited": "模块",
     "project.structure.proportion": "0.0",
     "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "editor.preferences.fonts.default",
+    "settings.editor.selected.configurable": "MavenSettings",
     "vue.rearranger.settings.migration": "true",
-    "应用程序.App.executor": "Run"
+    "应用程序.App.executor": "Run",
+    "应用程序.Launcher.executor": "Run",
+    "应用程序.com.lly.client.Launcher.executor": "Run"
   }
 }]]></component>
   <component name="RecentsManager">
@@ -90,6 +103,7 @@
       <recent name="com.lly.backend.TBM" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\Java_study\Java_DB\src\test\java\com\lly" />
       <recent name="D:\Java_study\Java_DB\src\main\java\com\lly\backend\sqlParser" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
@@ -97,10 +111,11 @@
       <recent name="D:\Java_study\Java_DB\src\main\java\com\lly\backend\DM=" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.lly.client" />
       <recent name="com.lly.backend.TBM.Result" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="应用程序.com.lly.client.Launcher">
     <configuration name="App" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.lly.App" />
       <module name="Java_DB" />
@@ -114,8 +129,42 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="Launcher" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.lly.backend.server.Launcher" />
+      <module name="Java_DB" />
+      <option name="PROGRAM_PARAMETERS" value="-open D:\Java_study\Java_DB\src\DB\DB" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.lly.backend.server.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="com.lly.client.Launcher" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.lly.client.Launcher" />
+      <module name="Java_DB" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.lly.client.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="应用程序.com.lly.client.Launcher" />
+      <item itemvalue="应用程序.App" />
+      <item itemvalue="应用程序.Launcher" />
+    </list>
     <recent_temporary>
       <list>
+        <item itemvalue="应用程序.com.lly.client.Launcher" />
+        <item itemvalue="应用程序.Launcher" />
         <item itemvalue="应用程序.App" />
       </list>
     </recent_temporary>
@@ -148,7 +197,8 @@
       <workItem from="1730884512734" duration="12862000" />
       <workItem from="1731136331009" duration="6692000" />
       <workItem from="1731219333142" duration="18596000" />
-      <workItem from="1731463866558" duration="41428000" />
+      <workItem from="1731463866558" duration="53261000" />
+      <workItem from="1732002669689" duration="6720000" />
     </task>
     <task id="LOCAL-00001" summary="init submit">
       <option name="closed" value="true" />
@@ -286,7 +336,15 @@
       <option name="project" value="LOCAL" />
       <updated>1731745859783</updated>
     </task>
-    <option name="localTasksCounter" value="18" />
+    <task id="LOCAL-00018" summary="TBM的剩余接口实现">
+      <option name="closed" value="true" />
+      <created>1731828886311</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1731828886311</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -331,7 +389,8 @@
     <MESSAGE value="实现sql语句简易解析器" />
     <MESSAGE value="数据表与字段的管理实现，以及TBM部分接口实现" />
     <MESSAGE value="TBM的select接口实现" />
-    <option name="LAST_COMMIT_MESSAGE" value="TBM的select接口实现" />
+    <MESSAGE value="TBM的剩余接口实现" />
+    <option name="LAST_COMMIT_MESSAGE" value="TBM的剩余接口实现" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

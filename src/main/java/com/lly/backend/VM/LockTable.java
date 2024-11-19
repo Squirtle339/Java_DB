@@ -16,6 +16,14 @@ public class LockTable {
     private Map<Long, Long> xWaitU;      // XID正在等待的UID
     private Lock lock; // 资源分配图的锁
 
+    public LockTable() {
+        x2u = new HashMap<>();
+        u2x = new HashMap<>();
+        xListWaitU = new HashMap<>();
+        waitLock = new HashMap<>();
+        xWaitU = new HashMap<>();
+        lock = new ReentrantLock();
+    }
     /**
      * 事务尝试获取资源
      * 不需要等待则返回null，否则在资源分配图中添加边，进行死锁检测，如果会造成死锁则抛出异常，没有死锁则返回锁对象
@@ -129,8 +137,6 @@ public class LockTable {
         finally {
             lock.unlock();
         }
-
-
     }
 
 
