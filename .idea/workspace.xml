@@ -4,24 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e31cd80a-9be0-4e7c-9183-895ade19f7d2" name="更改" comment="TBM的剩余接口实现">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/lly/backend/server/Executor.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/lly/backend/server/Launcher.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/lly/backend/server/Server.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/lly/backend/transport/Encoder.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/lly/backend/transport/Package.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/lly/backend/transport/Packager.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/lly/backend/transport/Transporter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/lly/client/Client.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/lly/client/Launcher.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/lly/client/RoundTripper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/lly/client/Shell.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lly/backend/DM/logger/Logger.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lly/backend/DM/logger/Logger.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lly/backend/VM/LockTable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lly/backend/VM/LockTable.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/lly/AppTest.java" beforeDir="false" />
-    </list>
+    <list default="true" id="e31cd80a-9be0-4e7c-9183-895ade19f7d2" name="更改" comment="C/S结构实现" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -198,7 +181,7 @@
       <workItem from="1731136331009" duration="6692000" />
       <workItem from="1731219333142" duration="18596000" />
       <workItem from="1731463866558" duration="53261000" />
-      <workItem from="1732002669689" duration="6720000" />
+      <workItem from="1732002669689" duration="6979000" />
     </task>
     <task id="LOCAL-00001" summary="init submit">
       <option name="closed" value="true" />
@@ -344,7 +327,15 @@
       <option name="project" value="LOCAL" />
       <updated>1731828886311</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="C/S结构实现">
+      <option name="closed" value="true" />
+      <created>1732022021170</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1732022021170</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -390,7 +381,8 @@
     <MESSAGE value="数据表与字段的管理实现，以及TBM部分接口实现" />
     <MESSAGE value="TBM的select接口实现" />
     <MESSAGE value="TBM的剩余接口实现" />
-    <option name="LAST_COMMIT_MESSAGE" value="TBM的剩余接口实现" />
+    <MESSAGE value="C/S结构实现" />
+    <option name="LAST_COMMIT_MESSAGE" value="C/S结构实现" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
